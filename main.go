@@ -8,8 +8,6 @@ import (
 	"os"
 	"regexp"
 	"time"
-
-	"github.com/joho/godotenv"
 )
 
 type ViaCEPResponse struct {
@@ -29,10 +27,10 @@ type TemperatureResponse struct {
 }
 
 func main() {
-	// Load environment variables
-	if err := godotenv.Load(); err != nil {
-		fmt.Println("Warning: .env file not found or unable to load")
-	}
+	// // Load environment variables
+	// if err := godotenv.Load(); err != nil {
+	// 	fmt.Println("Warning: .env file not found or unable to load")
+	// }
 
 	http.HandleFunc("/weather", weatherHandler)
 
