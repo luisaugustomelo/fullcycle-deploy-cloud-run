@@ -8,6 +8,8 @@ import (
 	"os"
 	"regexp"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 type ViaCEPResponse struct {
@@ -27,10 +29,12 @@ type TemperatureResponse struct {
 }
 
 func main() {
-	// // Load environment variables
-	// if err := godotenv.Load(); err != nil {
-	// 	fmt.Println("Warning: .env file not found or unable to load")
-	// }
+	// Load environment variables
+	if os.Getenv("ENV") != "production" {
+		if err := godotenv.Load(); err != nil {
+			fmt.Println("Warning: .env file not found or unable to load")
+		}
+	}
 
 	http.HandleFunc("/weather", weatherHandler)
 
@@ -78,7 +82,8 @@ func isValidZip(zip string) bool {
 	return match
 }
 
-func getCityByZip(zip string) (string, error) {
+// Variáveis de função para permitir substituição nos testes
+var getCityByZip = func(zip string) (string, error) {
 	client := &http.Client{Timeout: 5 * time.Second}
 	resp, err := client.Get("https://viacep.com.br/ws/" + zip + "/json/")
 	if err != nil {
@@ -102,7 +107,7 @@ func getCityByZip(zip string) (string, error) {
 	return data.Localidade, nil
 }
 
-func getTemperature(city string) (float64, error) {
+var getTemperature = func(city string) (float64, error) {
 	apiKey := os.Getenv("WEATHER_API_KEY")
 	if apiKey == "" {
 		return 0, errors.New("weather api key not configured")
